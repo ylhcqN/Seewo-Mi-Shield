@@ -1,0 +1,180 @@
+port: 7890
+socks-port: 7891
+allow-lan: true
+mode: Rule
+log-level: info
+#external-controller: 127.0.0.1:9090
+geoip: true
+geodata-mode: true
+geox-url:
+  geoip: https://cdn.jsdelivr.net/gh/Loyalsoldier/v2ray-rules-dat@release/geoip.dat
+dns:
+  enable: true
+  use-hosts: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - +.stun.*.*
+    - +.stun.*.*.*
+    - +.stun.*.*.*.*
+    - +.stun.*.*.*.*.*
+    - '*.n.n.srv.nintendo.net'
+    - +.stun.playstation.net
+    - xbox.*.*.microsoft.com
+    - '*.*.xboxlive.com'
+    - '*.msftncsi.com'
+    - '*.msftconnecttest.com'
+    - WORKGROUP
+    - +.*
+  nameserver:
+    - tls://1.12.12.12
+    - tls://120.53.53.53
+    - tls://223.5.5.5
+    - tls://223.6.6.6
+    - tls://dot.360.cn
+  default-nameserver:
+    - 114.114.114.114
+    - 8.8.8.8
+    - tls://223.5.5.5:853
+    - https://223.5.5.5/dns-query
+
+sniffer:
+  enable: true
+  force-dns-mapping: true
+  parse-pure-ip: true
+  override-destination: false
+  sniff:
+    HTTP:
+      ports: [80, 8080-8880]
+      override-destination: true
+    TLS:
+      ports: [443, 8443]
+    QUIC:
+      ports: [443, 8443]
+  force-domain:
+    - +.v2ex.com
+  skip-domain:
+    - Mijia Cloud
+    - '+.push.apple.com'
+  skip-src-address:
+    - 192.168.0.3/32
+  skip-dst-address:
+    - 192.168.0.3/32
+
+tun:
+  enable: true
+  device: Saiba_Momoi
+  stack: mixed
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+  auto-route: true
+  auto-redirect: true
+  auto-detect-interface: true
+  strict-route: false # 严格路由模式,它可以防止地址泄漏,并使 DNS 劫持在 Android 和使用 systemd-resolved 的 Linux 上工作,但你的设备将无法被其他设备访问
+
+# 锚点 - 节点订阅
+proxies:
+
+proxy-groups: 
+  - name: 远程巡课
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 设备画面
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 设备管控
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 软件升级文件传输
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 希沃校园设备运维管理系统
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 软件安装
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: AC部署
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+  - name: 去广告⛔
+    type: select
+    proxies:
+      - REJECT
+      - DIRECT
+
+rule-providers:
+  reject:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
+    path: ./ruleset/reject.yaml
+    interval: 86400
+  anti:
+    type: http
+    behavior: domain
+    url: "https://anti-ad.net/clash.yaml"
+    path: ./anti/anti.yaml
+    interval: 86400
+ 
+# 分流规则指向
+rules:
+  - DOMAIN,stun2.seewo.com,远程巡课
+  - DOMAIN,stun3.seewo.com,远程巡课
+  - DOMAIN,stun4.seewo.com,远程巡课
+  - IP-CIDR,115.227.43.121/32,远程巡课
+  - IP-CIDR,115.227.41.188/32,远程巡课
+  - IP-CIDR,101.67.18.49/32,远程巡课
+  - DOMAIN,upload.qiniup.com,设备画面
+  - DOMAIN,cstore.seewo.com,设备画面
+  - DOMAIN,cos-pro-pub.jikstatic.com,设备画面
+  - DOMAIN,pro-mis-desktop-pub-upload.jikstatic.com,设备画面
+  - DOMAIN,pro-mis-desktop-pub-1304449511.cos.ap-shanghai.myqcloud.com,设备画面
+  - DOMAIN,cstore-public-upload.cvtestatic.com,设备画面
+  - DOMAIN,ali-pro-pub.jikstatic.com,设备画面
+  - DOMAIN,pro-cos-private-1304449511.cos.ap-shanghai.myqcloud.com,设备画面
+  - DOMAIN,pro-cos-private.seewo.com,设备画面
+  - DOMAIN,tmp-aliyun-pri.oss-cn-hangzhou.aliyuncs.com,设备画面
+  - DOMAIN,tmp-aliyun-pub.oss-cn-hangzhou.aliyuncs.com,设备画面
+  - DOMAIN,iot-broker.seewo.com,设备管控
+  - DOMAIN,iot-mis.seewo.com,设备管控
+  - DOMAIN,iot-broker-mis.seewo.com,设备管控
+  - DOMAIN,iot.seewo.com,设备管控
+  - DOMAIN,myou.cvte.com,软件升级文件传输
+  - DOMAIN,static.cvte.com,软件升级文件传输
+  - DOMAIN,campus.seewo.com,希沃校园设备运维管理系统
+  - DOMAIN,mf.seewo.com,希沃校园设备运维管理系统
+  - DOMAIN,friday.cvte.com,希沃校园设备运维管理系统
+  - DOMAIN,ali-pro-pub.jikstatic.com,软件安装
+  - DOMAIN,oss1.seewo.com,软件安装
+  - DOMAIN,store-g1.seewo.com,软件安装
+  - DOMAIN,store-s1.seewo.com,软件安装
+  - DOMAIN,store-g1.cvte.com,软件安装
+  - DOMAIN,store-s1.cvte.com,软件安装
+  - DOMAIN,tinychinacdnweb.qiniu.com.w.kunlunno.com,软件安装
+  - DOMAIN,thirdwx.qlogo.cn,软件安装
+  - DOMAIN,tmp-pub.seewo.com,软件安装
+  - DOMAIN,tmp-qiniu-pub-upload.cvtestatic.com,软件安装
+  - DOMAIN,tmp-aliyun-pub.seewo.com,软件安装
+  - DOMAIN,up.qbox.me,软件安装
+  - DOMAIN,registry-public-cdn.cvte.com,AC部署
+  - DOMAIN,cvte-registry-public.oss-cn-hangzhou.aliyuncs.com,AC部署
+  - DOMAIN,ccloud.cvte.com,AC部署
+  - RULE-SET,reject,去广告⛔
+  - RULE-SET,anti,去广告⛔
+  - MATCH,DIRECT
